@@ -4,7 +4,7 @@ These detailed outputs accompany the Treasury Analytical Note "Insights from New
 
 The analytical note outlines an approach that uses the available data to provide insights into three different indicators of poverty, making use of recent data and modelling improvements. It applies a statistical algorithm to identify seven different categories of children in poverty and describes the characteristics of children in each group.
 
-This exploratory analysis confirms that the relationship between material hardship, income, and housing costs is complex. For some of the identified categories there is a direct relationship between low incomes, either before or after housing costs, and material deprivation. However, for several categories low incomes do not correspond to deprivation and vice-versa
+This exploratory analysis confirms that the relationship between material hardship, income, and housing costs is complex. For some of the identified categories there is a direct relationship between low incomes, either before or after housing costs, and material deprivation. However, for several categories low incomes do not correspond to deprivation and vice-versa.
 
 # Overview
 
