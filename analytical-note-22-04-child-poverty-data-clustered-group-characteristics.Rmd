@@ -180,7 +180,7 @@ all_results[Descriptor_1 == "F_Private_Decile" , Descriptor_2 := FPrivateIncome_
 ```
 
 
-These detailed outputs accompany the report https://www.treasury.govt.nz/publications/an/an-22-04
+These detailed outputs accompany the analytical note https://www.treasury.govt.nz/publications/an/an-22-04
 
 This analytical note outlines an approach that uses the available data to provide insights into three different indicators of poverty, making use of recent data and modelling improvements. It applies a statistical algorithm to identify seven different categories of children in poverty and describes the characteristics of children in each group.
 
