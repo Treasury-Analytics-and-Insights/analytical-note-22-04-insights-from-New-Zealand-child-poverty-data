@@ -1,0 +1,384 @@
+---
+title: "Treasury Analytical Note : Insights from New Zealand child poverty data"
+output:   
+  html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 4
+    theme: lumen
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(data.table)
+library(ggplot2)
+library(scales)
+library(knitr)
+library(gt)
+library(dplyr)
+library(patchwork)
+library(gt)
+source("src/utilities.R")
+
+###########################
+## read in data
+###########################
+
+filename <-  "data/CPIndicators_HES20.csv"
+table_name <- "Characteristics_poverty"
+ordering <- fread("data/order.csv")
+
+
+###########################
+# rename and group
+###########################
+
+name_map <- c("Not in poverty"="Not in poverty", "AHC50 only"="AHC50 only", 
+              "BHC50 only"="BHC50 only", "AHC50 and BHC50"="AHC50 and BHC50",
+              "Material Hardship and AHC50"="Material Hardship and AHC50", "Material Hardship and BHC50"="Material Hardship and BHC50", 
+              "Material Hardship, AHC50, and BHC50"="Material Hardship, AHC50, and BHC50", 
+              "Material Hardship only"="Material Hardship only", "Unknown MH"="Unknown MH")
+exclude_group <- "Not in poverty"
+
+cluster_characteristics <- c(
+  "H_BHC_Decile" = "BHC (equivalised household income, before housing costs) decile",
+  "H_HCost_Prop_Decile" = "Housing costs as a proportion of household income",
+  "H_Dep17" = "Dep17", 
+  "F_Income_Source" = "Family's main income source"
+)
+
+poverty_characteristics <- c("In_BHC_Poverty" = "Below moving-line BHC50 threshold", 
+                             "In_Fixed_AHC_Poverty" = "Below fixed-line AHC50 threshold", 
+                             "In_MH_Poverty" = "Material Hardship (Dep17>=6)", 
+                             "Poverty" = "Poverty")
+
+
+main_characteristics <- c("H_Dep17" = "Dep17", 
+                          "AHC_Depth_Band" = "Dollars from fixed AHC50 threshold", 
+                          "BHC_Depth_Band" = "Dollars from relative BHC50 threshold", 
+                          "Poverty" = "Poverty",
+                          "F_Income_Source" = "Family's main income source", 
+                          "H_HCost_Prop_Decile" = "Housing costs as a proportion of household income", 
+                          "H_Tenure" = "Housing tenure", 
+                          "F_Is_AS" = "Family is estimated to be eligible for Accommodation Supplement",
+                          "F_Is_ASAdmin" = "Family is estimated to receive Accommodation Supplement",
+                          "F_Disabled" = "Someone in the family has a disability",
+                          "F_ParentDisabled" = "A parent in the family has a disability", 
+                          "F_Highest_Qual" = "Parents' highest qualification", 
+                          "F_Is_Couple" = "Family type", 
+                          "H_Crowded" = "Is the house crowded?",
+                          "F_N_Earners" = "Number of earners in the family", 
+                          "H_People" = "Number of people in the household")
+
+additional_characteristics <- 
+  c(
+    "H_AHC_Decile" = "AHC (equivalised household income, after housing costs) decile",
+    "H_BHC_Decile" = "BHC (equivalised household income, before housing costs) decile",
+    "AHC_Depth_Band" = "Dollars from fixed AHC50 threshold", 
+    "BHC_Depth_Band" = "Dollars from relative BHC50 threshold",
+    "Disabled" = "Disabled child", 
+    "F_ChildDisabled" = "Disabled child in the family", 
+    "F_Disabled" = "Disabled person in the family", 
+    "F_ParentDisabled" = "Disabled parent",
+    "F_Is_Beneficiary" = "Family received a core benefit at some time over the year",
+    "F_Eligible_AS" = "Family is modelled to be eligible for Accommodation Supplement", 
+    "F_Eligible_AS_NotRecieving" = "Family is modelled to be eligible for Accommodation Supplement but is not receiving it", 
+    "F_Is_WFF" = "Family is modelled to be eligible for Working for Families",
+    "H_ASArea" = "Accommodation Supplement area", 
+    "H_Crowded" = "Is the house crowded",
+    "H_Dep17" = "Deprivation Index (decile)", 
+    "H_HCost_Prop_Decile" = "Housing costs as a proportion of household income", 
+    "H_HCost_Decile" = "Housing cost (decile)",   
+    "H_Region" = "Region",
+    "H_Tenure" = "Tenure", 
+    "H_Tenure_Detailed" = "Tenure (detailed)",
+    "Asian" = "Asian", 
+    "European" = "European",
+    "Maori" = "Māori", 
+    "Pacific" = "Pacific",
+    "F_Is_Couple" = "Family type", # change 
+    "F_Num_Children_Class" = "Number of children in the family",
+    "Age" = "Age of child", # change
+    "F_Youngest" = "Youngest child in the family", 
+    "F_Oldest" = "Oldest person in the family",
+    "H_People" = "Number of people in the household",
+    "H_Families" = "Number of families in the household",
+    "F_Highest_Qual" = "Parents' highest qualification", 
+    "F_Currently_FTEmployed" = "A parent is currently working full time (according to HES)",
+    "F_N_Earners" = "Number of earners in the family", 
+    "F_Private_Decile" = "Family private (non-benefit) income (decile)",
+    "F_Income_Source" = "Family's main income source"
+  )
+
+cluster_characteristics <- c(
+  "H_BHC_Decile" = "BHC (equivalised household income, before housing costs) decile",
+  "H_HCost_Prop_Decile" = "Housing costs as a proportion of household income",
+  "H_Dep17" = "Dep17", 
+  "F_Income_Source" = "Family's main income source"
+)
+
+MW_characteristics <- c("HadToBorrow" = "In the last twelve months, have you borrowed from friends or family to meet everyday living costs because of a shortage of money?", 
+                        "BrokenApplicances" = "In the last twelve months have you delayed replacing or repairing broken or damaged appliances to keep costs down?", 
+                        "Cold" = "In the last twelve months have you put up with feeling cold to keep costs down?",         
+                        "IsYourIncomeEnough" = "Is your income enough?", 
+                        "LessMeat" = "In the last twelve months have you bought cheaper cuts of meat or less meat than you would like to keep costs down?", 
+                        "LimitedClothesShoes" = "When buying, or thinking about buying, clothes or shoes for yourself do you usually feel limited by money available?", 
+                        "NoInsurance" = "Do you have house insurance?", 
+                        "NoLocalTrips" = "In the last twelve months have you done without or cut back on trips to the shops or other local placesto keep costs down?", 
+                        "NoMeal" = "Do you have a meal with meat, fish or chicken (or vegetarian equivalent) at least each second day?", 
+                        "NoShoes" = "Do you have two pairs of shoes in a good condition that are suitable for your daily  activities?", 
+                        "NoDentist" = "In the last twelve months have you had to postpone or put off visits to the dentist to keep costs down?", 
+                        "NoDoctor" = "In the last twelve months have you had to postpone or put off visits to the doctor to keep costs down?", 
+                        "NoFruitVeg" = "In the last twelve months have you had to go without fresh fruit or vegetables to keep costs down?", 
+                        "NoGifts" = "Do you give presents to family or friends on birthdays, Christmas or other special occasions?",
+                        "NoSuitableClothes" = "Do you have suitable clothes for important or special occasions?", 
+                        "NotPaidCar" = "In the last twelve months, have you not been able to pay for car insurance, registration or warrant of fitness on time because of a shortage of money?", 
+                        "NotPaidUtility" = "In the last twelve months, have you not been able to pay electricity, gas, rates or water bills  on time because of a shortage of money?", 
+                        "UnexpectedExpense" = "If you (or your partner) had an unexpected and unavoidable expense of $500 in the next week, could you pay in a month without borrowing?")
+
+palette_percent <- col_numeric(palette = "viridis", domain = c(0, 1), alpha = 0.75, na.color ="#440154FF")
+palette_risk <- col_numeric(palette = "viridis", domain = c(0, 3), alpha = 0.75, na.color =  "#440154FF") 
+
+
+
+all_results <- characteristics(filename, table_name, name_map, exclude_group = "Not in poverty")[[2]]
+
+# remove some incorrect data
+all_results <- all_results[!(Descriptor_1 %in% c("NoMeal", "NoShoes", "NoSuitableClothes", "NoInsurance", "NoGifts"))]
+
+# better names
+# 
+# all_results[Descriptor_1=="Age"& Descriptor_2 == "3-Apr", Descriptor_2 := "3 to 4"]
+# all_results[Descriptor_1=="Age"& Descriptor_2 == "5-Nov", Descriptor_2 := "5 to 11"]
+
+
+# better names
+all_results[Descriptor_1=="F_Is_Couple" & Descriptor_2 == FALSE, Descriptor_2 := "Single parent"]
+all_results[Descriptor_1=="F_Is_Couple" & Descriptor_2 == TRUE, Descriptor_2 := "Coupled parent"]
+
+all_results[Descriptor_1 %in% names(MW_characteristics) & Descriptor_2 == FALSE, Descriptor_2 := "No Deprivation"]
+all_results[Descriptor_1 %in% names(MW_characteristics) & Descriptor_2 == TRUE, Descriptor_2 := "Deprivation"]
+
+HCost_prop_names <- c("1" = "0%", "2" = "3%-6%", "3" = "6%-10%", 
+                      "4" = "10%-15%", "5" = "15%-20%", "6" = "20%-23%", 
+                      "7" = "23%-28%", "8" = "28%-35%", "9" = "35%-46%", 
+                      "10" = ">46%" )
+all_results[Descriptor_1 == "H_HCost_Prop_Decile" , Descriptor_2 := HCost_prop_names[Descriptor_2]]
+
+FPrivateIncome_names <- c("1" = "<$1", "2" = "$1-$3,500", "3" = "$3,500-$15,000", 
+                      "4" = "$15,000-$32,000", "5" = "$32,000-$48,000", "6" = "$48,000-$65,000", 
+                      "7" = "$65,000-$88,000", "8" = "$88,000-$118,000", "9" = "$118,000-$162,000", 
+                      "10" = ">$162,000" )
+all_results[Descriptor_1 == "F_Private_Decile" , Descriptor_2 := FPrivateIncome_names[Descriptor_2]]
+
+
+```
+
+
+These detailed outputs accompany the report https://www.treasury.govt.nz/publications/an/an-22-04
+
+This analytical note outlines an approach that uses the available data to provide insights into three different indicators of poverty, making use of recent data and modelling improvements. It applies a statistical algorithm to identify seven different categories of children in poverty and describes the characteristics of children in each group.
+
+The tables below describe the characteristics of each group, where the groups are defined based on the overlap of three poverty indicators. These results are provided to compare with the clustering results in the file analytical-note-22-04-child-poverty-data-clustered-group-characteristics.html. 
+
+
+## Groups
+
+Groups are defined based on three poverty indicators - moving-line BHC50, fixed-line AHC50, and Material Hardship. 
+
+These detailed results have been derived by the author using the TAWA model for Tax Year 2020. They are indicative of the characteristics of each group. Due to Stat NZ's confidentiality requirements some groups are suppressed, which means that the groups may not sum to totals. 
+
+## IDI Disclaimer
+
+These results are not official statistics. They have been created for research purposes from the Integrated Data Infrastructure (IDI) which is carefully managed by Stats NZ. For more information about the IDI please visit https://www.stats.govt.nz/integrated-data/. The results are based in part on tax data supplied by Inland Revenue to Stats NZ under the Tax Administration Act 1994 for statistical purposes. Any discussion of data limitations or weaknesses is in the context of using the IDI for statistical purposes, and is not related to the data’s ability to support Inland Revenue’s core operational requirements.
+
+
+## Clustering characteristics {.tabset .tabset-pills .tabcontent}
+
+### Number of Children
+
+```{r  echo=FALSE}
+make_table(all_results, cluster_characteristics, "Population")
+
+```
+
+### Item Probability
+
+Item probability: what proportion of children in this group have this characteristic
+
+```{r echo=FALSE}
+make_table(all_results, cluster_characteristics, "Item_Prob")
+```
+
+
+### Relative Risk (compared to other groups)
+Relative risk (near poverty): compared to the rest of the population of interest, how prevalent is this characteristic. 1=No difference, <1=Less likely for this group, >1=more likely for this group
+```{r echo=FALSE, warning=FALSE, warning=FALSE}
+
+make_table(all_results, cluster_characteristics, "Relative_Risk_PopOfInterest", exclude_group)
+```
+
+### Relative Risk (compared to population)
+
+Relative risk (all): compared to the rest of the population, how prevalent is this characteristic. 1=No difference, <1=Less likely for this group, >1=more likely for this group
+
+```{r echo=FALSE, warning=FALSE, warning=FALSE}
+
+make_table(all_results, cluster_characteristics, "Relative_Risk_all")
+```
+
+
+## Poverty {.tabset .tabset-pills .tabcontent}
+
+### Number of Children
+
+```{r  echo=FALSE}
+make_table(all_results, poverty_characteristics, "Population")
+
+```
+
+### Item Probability
+
+Item probability: what proportion of children in this group have this characteristic
+
+```{r echo=FALSE}
+make_table(all_results, poverty_characteristics, "Item_Prob")
+```
+
+
+### Relative Risk (compared to other groups)
+Relative risk (near poverty): compared to the rest of the population of interest, how prevalent is this characteristic. 1=No difference, <1=Less likely for this group, >1=more likely for this group
+```{r echo=FALSE, warning=FALSE, warning=FALSE}
+
+make_table(all_results, poverty_characteristics, "Relative_Risk_PopOfInterest", exclude_group)
+```
+
+### Relative Risk (compared to population)
+
+Relative risk (all): compared to the rest of the population, how prevalent is this characteristic. 1=No difference, <1=Less likely for this group, >1=more likely for this group
+
+```{r echo=FALSE, warning=FALSE, warning=FALSE}
+
+make_table(all_results, poverty_characteristics, "Relative_Risk_all")
+```
+
+
+## Main characteristics {.tabset .tabset-pills .tabcontent}
+
+### Number of Children {.tabset .tabset-pills .tabcontent}
+
+```{r, results='asis', echo=FALSE}
+for (category in names(main_characteristics)){
+  
+  cat("#### ", main_characteristics[category], "\n")
+  print(make_table(all_results,main_characteristics[category], "Population"))
+  cat('\n\n')
+}
+
+```
+
+
+### Item Probability {.tabset .tabset-pills .tabcontent}
+
+Item probability: what proportion of children in this group have this characteristic
+
+```{r, results='asis', echo=FALSE, warning=FALSE}
+for (category in names(main_characteristics)){
+  
+  cat("#### ", main_characteristics[category], "\n")
+  print(make_table(all_results,main_characteristics[category], "Item_Prob"))
+  cat('\n\n')
+}
+
+```
+
+### Relative Risk (compared to other groups) {.tabset .tabset-pills .tabcontent}
+
+Relative risk (near poverty): compared to the rest of the population of interest, how prevalent is this characteristic. 1=No difference, <1=Less likely for this group, >1=more likely for this group
+
+```{r, results='asis', echo=FALSE, warning=FALSE}
+for (category in names(main_characteristics)){
+  
+  cat("#### ", main_characteristics[category], "\n")
+  print(make_table(all_results,main_characteristics[category], "Relative_Risk_PopOfInterest",exclude_group))
+  cat('\n\n')
+}
+
+```
+
+
+### Relative Risk (compared to population) {.tabset .tabset-pills .tabcontent}
+
+Relative risk (all): compared to the rest of the population, how prevalent is this characteristic. 1=No difference, <1=Less likely for this group, >1=more likely for this group
+
+```{r, results='asis', echo=FALSE, warning=FALSE}
+for (category in names(main_characteristics)){
+  
+  cat("#### ", main_characteristics[category], "\n")
+  print(make_table(all_results,main_characteristics[category], "Relative_Risk_all"))
+  cat('\n\n')
+}
+
+```
+
+
+## Additional characteristics {.tabset .tabset-pills .tabcontent}
+
+### Number of Children {.tabset .tabset-pills .tabcontent}
+
+```{r, results='asis', echo=FALSE}
+for (category in names(additional_characteristics)){
+  
+  cat("#### ", additional_characteristics[category], "\n")
+  print(make_table(all_results,additional_characteristics[category], "Population"))
+  cat('\n\n')
+}
+
+```
+
+
+### Item Probability {.tabset .tabset-pills .tabcontent}
+
+Item probability: what proportion of children in this group have this characteristic
+
+```{r, results='asis', echo=FALSE, warning=FALSE}
+for (category in names(additional_characteristics)){
+  
+  cat("#### ", additional_characteristics[category], "\n")
+  print(make_table(all_results,additional_characteristics[category], "Item_Prob"))
+  cat('\n\n')
+}
+
+```
+
+### Relative Risk (compared to other groups) {.tabset .tabset-pills .tabcontent}
+
+Relative risk (near poverty): compared to the rest of the population of interest, how prevalent is this characteristic. 1=No difference, <1=Less likely for this group, >1=more likely for this group
+
+```{r, results='asis', echo=FALSE, warning=FALSE}
+for (category in names(additional_characteristics)){
+  
+  cat("#### ", additional_characteristics[category], "\n")
+  print(make_table(all_results,additional_characteristics[category], "Relative_Risk_PopOfInterest", exclude_group))
+  cat('\n\n')
+}
+
+```
+
+
+### Relative Risk (compared to population) {.tabset .tabset-pills .tabcontent}
+
+Relative risk (all): compared to the rest of the population, how prevalent is this characteristic. 1=No difference, <1=Less likely for this group, >1=more likely for this group
+
+```{r, results='asis', echo=FALSE, warning=FALSE}
+for (category in names(additional_characteristics)){
+  
+  cat("#### ", additional_characteristics[category], "\n")
+  print(make_table(all_results,additional_characteristics[category], "Relative_Risk_all"))
+  cat('\n\n')
+}
+
+```
+
