@@ -1,0 +1,123 @@
+Descriptor_2,Value,Order
+0,0,1
+1,1,2
+2,2,3
+3,3,4
+4,4,5
+5,5,6
+6,6,7
+7,7,8
+8,8,9
+9,9,10
+10,10,11
+11,11,12
+12,12,13
+13,13,14
+14,14,15
+15,15,16
+16,16,17
+17,17,18
+greater than 300,greater than $300,19
+$150 to $300,$150 to $300,20
+$100 to $150,$100 to $150,21
+$50 to $100,$50 to $100,22
+$0 to $50,$0 to $50,23
+-$50 to $0,-$50 to $0,24
+-$100 to -$50,-$100 to -$50,25
+-$150 to -$100,-$150 to -$100,26
+-$300 to -$150,-$300 to -$150,27
+less than -300,less than -$300,28
+<3,<3,29
+3-Apr,3 to 4,30
+5-Nov,5 to 11,31
+12+,12+,32
+FALSE,FALSE,33
+TRUE,TRUE,34
+N/A,N/A,35
+None,None,36
+Secondary School,Secondary School,37
+Cert/Diploma,Cert/Diploma,38
+Degree,Degree,39
+Post Grad,Post Grad,40
+Ben,Benefits,41
+BenWork,Benefits with some work,42
+WorkBen,Work with some benefits,43
+Work,Work,44
+3+,3+,45
+5+,5+,46
+<18,<18,47
+18-30,18-30,48
+31-40,31-40,49
+41-50,41-50,50
+51-64,51-64,51
+65+,65+,52
+Severely crowded,Severely crowded,53
+Crowded,Crowded,54
+Not crowded,Not crowded,55
+Extra room,Extra room,56
+Many extra rooms,Many extra rooms,57
+Unknown,Unknown,58
+Auckland,Auckland,59
+Bay of Plenty,Bay of Plenty,60
+Canterbury,Canterbury,61
+Gisborne / Hawkes Bay,Gisborne / Hawkes Bay,62
+Manawatu Whanganui,Manawatu Whanganui,63
+Northland,Northland,64
+Otago,Otago,65
+Southland,Southland,66
+Taranaki,Taranaki,67
+Tasman / Nelson / Marlborough / West Coast region,Tasman / Nelson / Marlborough / West Coast region,68
+Waikato,Waikato,69
+Wellington,Wellington,70
+HNZ,Housing New Zealand,71
+Other,Other,72
+Owned,Owned,73
+PrivateRented,Private Rental,74
+Mortgage not defined,Mortgage not defined,75
+Mortgage payments,Mortgage payments,76
+No mortgage payments,No mortgage payments,77
+No rent payments,No rent payments,78
+Rent payments,Rent payments,79
+"Trust, mortgage not defined","Trust, mortgage not defined",80
+"Trust, mortgage payments","Trust, mortgage payments",81
+"Trust, no mortgage payments","Trust, no mortgage payments",82
+Not specifed,Not specifed,83
+Don't know,Don't know,84
+Not enough,Not enough,85
+Only just enough,Only just enough,86
+Enough,Enough,87
+More than enough,More than enough,88
+Refused,Refused,89
+"Material Hardship, AHC50, and BHC50","Material Hardship, AHC50, and BHC50",90
+Material Hardship and AHC50,Material Hardship and AHC50,91
+Material Hardship and BHC50,Material Hardship and BHC50,92
+Material Hardship only,Material Hardship only,93
+AHC50 and BHC50,AHC50 and BHC50,94
+BHC50 only,BHC50 only,95
+AHC50 only,AHC50 only,96
+Not in poverty,Not in poverty,97
+Deprivation,Deprivation,98
+No Deprivation,No Deprivation,99
+Single parent,Single parent,100
+Coupled parent,Coupled parent,101
+,Missing data,102
+0%,Decile 1: 0%,103
+3%-6%,Decile 2: 3%-6%,104
+6%-10%,Decile 3: 6%-10%,105
+10%-15%,Decile 4: 10%-15%,106
+15%-20%,Decile 5: 15%-20%,107
+20%-23%,Decile 6: 20%-23%,108
+23%-28%,Decile 7: 23%-28%,109
+28%-35%,Decile 8: 28%-35%,110
+35%-46%,Decile 9: 35%-46%,111
+>46%,Decile 10: >46%,112
+<$1,Decile 1: <$1,113
+"$1-$3,500","Decile 2: $1-$3,500",114
+"$3,500-$15,000","Decile 3: $3,500-$15,000",115
+"$15,000-$32,000","Decile 4: $15,000-$32,000",116
+"$32,000-$48,000","Decile 5: $32,000-$48,000",117
+"$48,000-$65,000","Decile 6: $48,000-$65,000",118
+"$65,000-$88,000","Decile 7: $65,000-$88,000",119
+"$88,000-$118,000","Decile 8: $88,000-$118,000",120
+"$118,000-$162,000","Decile 9: $118,000-$162,000",121
+">$162,000","Decile 10: >$162,000",122
