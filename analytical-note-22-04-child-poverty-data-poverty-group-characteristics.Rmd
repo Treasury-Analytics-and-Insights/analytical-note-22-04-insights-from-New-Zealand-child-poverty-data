@@ -190,6 +190,22 @@ Groups are defined based on three poverty indicators - moving-line BHC50, fixed-
 
 These detailed results have been derived by the author using the TAWA model for Tax Year 2020. They are indicative of the characteristics of each group. Due to Stat NZ's confidentiality requirements some groups are suppressed, which means that the groups may not sum to totals. 
 
+
+## Modelling assumptions
+
+Source: Authors calculations. These results have not gone through Treasury's rigorous QA process that is used for costings and official advice.
+
+* This analysis was carried out using Treasury’s micro-simulation model of the tax and welfare system - TAWA. All calculations should be considered as estimations.
+
+* Estimates are for the 2019/20 tax year using HES 2019/20 augmented using IDI data.
+
+* The modified OECD equivalisation scale is used to calculate equivalised incomes.
+
+* A take-up rate (a model based on admin recipients) has been applied to the Accommodation Supplement when the expected number of recipients changes. Recipients are in the first case based on receipt in the admin data.
+
+* Apparent inconsistencies in totals are due to rounding and/or suppression, with estimates being suppressed if they did not meet the confidentiality requirements of Statistics NZ.
+
+
 ## IDI Disclaimer
 
 These results are not official statistics. They have been created for research purposes from the Integrated Data Infrastructure (IDI) which is carefully managed by Stats NZ. For more information about the IDI please visit https://www.stats.govt.nz/integrated-data/. The results are based in part on tax data supplied by Inland Revenue to Stats NZ under the Tax Administration Act 1994 for statistical purposes. Any discussion of data limitations or weaknesses is in the context of using the IDI for statistical purposes, and is not related to the data’s ability to support Inland Revenue’s core operational requirements.
