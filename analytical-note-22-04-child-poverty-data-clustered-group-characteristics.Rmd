@@ -211,6 +211,8 @@ These detailed results have been derived by the author using the TAWA model. The
 
 ## Modelling assumptions
 
+Source: Authors calculations. These results have not gone through Treasury's rigorous QA process that is used for costings and official advice.
+
 * This analysis was carried out using Treasury’s micro-simulation model of the tax and welfare system - TAWA. All calculations should be considered as estimations.
 
 * Estimates are for the 2019/20 tax year using HES 2019/20 augmented using IDI data.
